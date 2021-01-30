@@ -94,8 +94,11 @@ public class FuncionarioService {
 			funcionarioBD.getContatos().addAll(funcionario.getContatos());
 		}
 
-		EnderecoUtil.copiarPropriedadesNaoNulas(funcionario.getEndereco(), funcionarioBD.getEndereco());
-		ContaUtil.copiarPropriedadesNaoNulas(funcionario.getConta(), funcionarioBD.getConta());
+		if (funcionario.getEndereco() != null)
+			EnderecoUtil.copiarPropriedadesNaoNulas(funcionario.getEndereco(), funcionarioBD.getEndereco());
+		
+		if (funcionario.getConta() != null)
+			ContaUtil.copiarPropriedadesNaoNulas(funcionario.getConta(), funcionarioBD.getConta());
 
 		return repository.save(funcionarioBD);
 	}

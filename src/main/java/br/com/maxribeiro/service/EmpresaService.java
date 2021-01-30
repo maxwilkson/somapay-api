@@ -72,8 +72,11 @@ public class EmpresaService {
 			empresaBD.getContatos().addAll(empresa.getContatos());
 		}
 
-		EnderecoUtil.copiarPropriedadesNaoNulas(empresa.getEndereco(), empresaBD.getEndereco());
-		ContaUtil.copiarPropriedadesNaoNulas(empresa.getConta(), empresaBD.getConta());
+		if (empresa.getEndereco() != null)
+			EnderecoUtil.copiarPropriedadesNaoNulas(empresa.getEndereco(), empresaBD.getEndereco());
+
+		if (empresa.getConta() != null)
+			ContaUtil.copiarPropriedadesNaoNulas(empresa.getConta(), empresaBD.getConta());
 
 		return repository.save(empresaBD);
 	}
