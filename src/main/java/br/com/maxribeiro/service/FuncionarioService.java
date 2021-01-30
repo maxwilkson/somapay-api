@@ -10,10 +10,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import br.com.maxribeiro.entities.Conta;
 import br.com.maxribeiro.entities.Empresa;
 import br.com.maxribeiro.entities.Funcionario;
-import br.com.maxribeiro.respository.ContaRepository;
 import br.com.maxribeiro.respository.EmpresaRepository;
 import br.com.maxribeiro.respository.FuncionarioRepository;
 import br.com.maxribeiro.util.ContaUtil;
@@ -27,9 +25,6 @@ public class FuncionarioService {
 
 	@Autowired
 	private EmpresaRepository empresaRepository;
-	
-	@Autowired
-	private ContaRepository contaRepository;
 
 	public Optional<Funcionario> buscarPorId(Long id) {
 		return this.repository.findById(id);
@@ -112,8 +107,10 @@ public class FuncionarioService {
 	}
 
 	public BigDecimal buscarSaldoPorFuncionarioId(Long id) {
-		Conta conta = this.contaRepository.findByFuncionarioId(id);
-		return conta.getSaldo();
+		Funcionario funcionario = this.repository.findByFuncionarioIdOnlyConta(id);
+		if (funcionario == null)
+			throw new EmptyResultDataAccessException(1);
+		return funcionario.getConta().getSaldo();
 	}
 
 }

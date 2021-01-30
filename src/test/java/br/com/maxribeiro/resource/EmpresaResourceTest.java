@@ -11,23 +11,24 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 
+import br.com.maxribeiro.BaseTest;
 import br.com.maxribeiro.entities.Empresa;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 
 @SpringBootTest
-public class EmpresaResourceTest {
+public class EmpresaResourceTest extends BaseTest {
 	
 	@BeforeAll
 	public static void setup() {
-	    RestAssured.baseURI = "http://localhost:8080";
+	    RestAssured.baseURI = APP_URI;
 	}
 	
 	@Test
 	public void postEmpresa() {
 		with().body(criarEmpresa()).contentType(ContentType.JSON)
 		.when()
-		.post("/empresa")
+		.post("/empresas")
 		.then()
 		.statusCode(HttpStatus.CREATED.value())
 		.and()

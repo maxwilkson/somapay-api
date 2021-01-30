@@ -3,7 +3,7 @@ package br.com.maxribeiro.entities;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -56,12 +56,12 @@ public class Funcionario implements Serializable {
 	private String email;
 
 	@OneToOne(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, orphanRemoval = true)
-	@JoinTable(name = "funcionario_endereco", joinColumns = @JoinColumn(name = "funcionario_id"), inverseJoinColumns = @JoinColumn(name = "endereco_id"))
+	@JoinColumn(name = "endereco_id")
 	private Endereco endereco;
 
 	@OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, orphanRemoval = true)
 	@JoinTable(name = "funcionario_contato", joinColumns = @JoinColumn(name = "funcionario_id"), inverseJoinColumns = @JoinColumn(name = "contato_id"))
-	private List<Contato> contatos;
+	private Set<Contato> contatos;
 
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -82,7 +82,7 @@ public class Funcionario implements Serializable {
 	private Conta conta;
 
 	public Funcionario(String nome, String cpf, String rg, LocalDate dataNascimento, SexoEnum sexo, String email,
-			Endereco endereco, List<Contato> contatos, Empresa empresa, LocalDate dataAdmissao, LocalDate dataDemissao,
+			Endereco endereco, Set<Contato> contatos, Empresa empresa, LocalDate dataAdmissao, LocalDate dataDemissao,
 			BigDecimal salario, String funcao, Conta conta) {
 		super();
 		this.nome = nome;
@@ -98,6 +98,10 @@ public class Funcionario implements Serializable {
 		this.dataDemissao = dataDemissao;
 		this.salario = salario;
 		this.funcao = funcao;
+		this.conta = conta;
+	}
+
+	public Funcionario(Conta conta) {
 		this.conta = conta;
 	}
 

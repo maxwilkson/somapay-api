@@ -3,6 +3,7 @@ package br.com.maxribeiro.entities;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -52,12 +53,12 @@ public class Empresa implements Serializable {
 	private String email;
 
 	@OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
-	@JoinTable(name = "empresa_endereco", joinColumns = @JoinColumn(name = "empresa_id"), inverseJoinColumns = @JoinColumn(name = "endereco_id"))
+	@JoinColumn(name = "endereco_id")
 	private Endereco endereco;
 
 	@OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
 	@JoinTable(name = "empresa_contato", joinColumns = @JoinColumn(name = "empresa_id"), inverseJoinColumns = @JoinColumn(name = "contato_id"))
-	private List<Contato> contatos;
+	private Set<Contato> contatos;
 	
 	@OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
 	@JoinTable(name = "empresa_conta", joinColumns = @JoinColumn(name = "empresa_id"), inverseJoinColumns = @JoinColumn(name = "conta_id"))
@@ -68,7 +69,7 @@ public class Empresa implements Serializable {
 	private List<Funcionario> funcionarios;
 
 	public Empresa(String nome, String cnpj, String inscricaoEstadual, LocalDate dataAbertura, String site,
-			String email, Endereco endereco, List<Contato> contatos, Conta conta, List<Funcionario> funcionarios) {
+			String email, Endereco endereco, Set<Contato> contatos, Conta conta, List<Funcionario> funcionarios) {
 		super();
 		this.nome = nome;
 		this.cnpj = cnpj;
@@ -80,6 +81,10 @@ public class Empresa implements Serializable {
 		this.contatos = contatos;
 		this.conta = conta;
 		this.funcionarios = funcionarios;
+	}
+
+	public Empresa(Conta conta) {
+		this.conta = conta;
 	}
 	
 }
