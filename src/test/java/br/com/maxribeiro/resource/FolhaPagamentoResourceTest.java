@@ -1,12 +1,10 @@
 package br.com.maxribeiro.resource;
 
-import static io.restassured.RestAssured.*;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.Matchers.blankOrNullString;
-import static org.hamcrest.Matchers.not;
+import static io.restassured.RestAssured.with;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,15 +15,19 @@ import org.springframework.http.HttpStatus;
 
 import br.com.maxribeiro.BaseTest;
 import br.com.maxribeiro.entities.Empresa;
+import br.com.maxribeiro.respository.EmpresaRepository;
 import br.com.maxribeiro.util.BancoDadosUtil;
+import br.com.maxribeiro.util.BigDecimalUtil;
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 
 @SpringBootTest
 public class FolhaPagamentoResourceTest extends BaseTest {
 	
 	@Autowired
 	private BancoDadosUtil bancoDadosUtil;
+	
+	@Autowired
+	private EmpresaRepository empresaRepository;
 	
 	@BeforeAll
 	public static void setup() {
@@ -35,23 +37,25 @@ public class FolhaPagamentoResourceTest extends BaseTest {
 	@BeforeEach
 	public void init() {
 		bancoDadosUtil.resetarBanco();
+		atualizarToken();
 	}
 	
 	@Test
 	public void postEmpresa() {
-		given()
+		Empresa empresa = empresaRepository.findByCnpj("75253226000101").get();
+		
+		with().auth().oauth2(super.token)
 		.when()
-		.post("/empresas/1/folha-pagamento/pagar")
+		.post("/empresas/" + empresa.getId() + "/folha-pagamento/pagar")
 		.then()
 		.statusCode(equalTo(HttpStatus.OK.value()));
 		
-		given()
+		BigDecimal saldo = with().auth().oauth2(super.token)
 		.when()
-		.get("/empresas/1/conta/saldo")
-		.then()
-		.statusCode(equalTo(HttpStatus.OK.value()))
-		.and()
-		.body(equalTo(new BigDecimal("700542.50")));
+		.get("/empresas/" + empresa.getId() + "/conta/saldo")
+		.thenReturn().getBody().as(BigDecimal.class);
+		
+		assertThat(BigDecimalUtil.arredondar(saldo), equalTo(BigDecimalUtil.arredondar(new BigDecimal("695021.60"))));
 
 	}
 }

@@ -7,26 +7,39 @@ import static org.hamcrest.Matchers.not;
 import java.time.LocalDate;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 
 import br.com.maxribeiro.BaseTest;
 import br.com.maxribeiro.entities.Empresa;
+import br.com.maxribeiro.util.BancoDadosUtil;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 
 @SpringBootTest
 public class EmpresaResourceTest extends BaseTest {
 	
+	@Autowired
+	private BancoDadosUtil bancoDadosUtil;
+	
 	@BeforeAll
 	public static void setup() {
 	    RestAssured.baseURI = APP_URI;
 	}
 	
+	@BeforeEach
+	public void init() {
+		bancoDadosUtil.resetarBanco();
+		atualizarToken();
+	}
+	
 	@Test
 	public void postEmpresa() {
-		with().body(criarEmpresa()).contentType(ContentType.JSON)
+		with().auth().oauth2(super.token)
+		.body(criarEmpresa()).contentType(ContentType.JSON)
 		.when()
 		.post("/empresas")
 		.then()
