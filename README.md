@@ -1,6 +1,11 @@
 # Somapay API
 Projeto de Teste da Somapay
 
+## Tecnologias
+    Plataforma Java 11
+    Framework Spring Boot 2.4.2
+    Banco de dados PostgreSQL 11
+
 ## Exemplos   
 #### Para obter o token de autenticação  
     curl --location --request POST 'http://localhost:8080/oauth/token' \
@@ -106,3 +111,7 @@ Projeto de Teste da Somapay
             "saldo": 4000.00
         }
     }'
+    
+ #### Processar a folha de pagamento de uma empresa e receber resumo
+     curl --location --request POST 'http://localhost:8080/empresas/1/folha-pagamento/pagar' \
+      --header 'Authorization: Bearer 159087ab-c091-4f7d-96af-cdb5c207139e'
